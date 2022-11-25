@@ -17,10 +17,15 @@ export interface PercyPluginOptions {
    * Percy options.
    */
   percyOptions?: any
+  /**
+   * Puppeteer options.
+   */
+  puppeteerOptions?: any
 }
 
 const defaultOptions: PercyPluginOptions = {
   percyOptions: {},
+  puppeteerOptions: {},
 }
 
 export function HstPercy (options: PercyPluginOptions = {}): Plugin {
@@ -34,7 +39,7 @@ export function HstPercy (options: PercyPluginOptions = {}): Plugin {
       }
 
       const puppeteer = await import('puppeteer')
-      const browser = await puppeteer.launch()
+      const browser = await puppeteer.launch(finalOptions.puppeteerOptions)
 
       // Collect client and env info
       const sdkPkg = require(path.join(__dirname, '../package.json'))
@@ -57,7 +62,7 @@ export function HstPercy (options: PercyPluginOptions = {}): Plugin {
         }
 
         const page = await browser.newPage()
-        await page.goto(url)
+        await page.goto(url, finalOptions.puppeteerOptions)
 
         const name = `${story.title} > ${variant.title}`
         await page.evaluate(await fetchPercyDOM())
